@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+require("dotenv/config");
+var db_js_1 = require("./config/db.js");
+var main_js_1 = require("./routes/main.js");
+var burrito_js_1 = require("./routes/burrito.js");
+var order_js_1 = require("./routes/order.js");
+var order_item_js_1 = require("./routes/order-item.js");
+var app = (0, express_1.default)();
+var port = process.env.NODE_LOCAL_PORT || 3000;
+await (0, db_js_1.connect)();
+// console.log('seeding database');
+// await seed();
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use('/', main_js_1.default);
+app.use('/api/burrito', burrito_js_1.default);
+app.use('/api/orders', order_js_1.default);
+app.use('/api/order-item', order_item_js_1.default);
+app.listen(port, function () {
+    console.log("[server]: Server is running at http://localhost:".concat(port));
+});
