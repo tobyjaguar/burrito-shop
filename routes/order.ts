@@ -5,6 +5,11 @@ import { OrderItem } from '../models/orderItem.js';
 
 const router = express.Router();
 
+interface IngredientType {
+    name: string;
+    price: number;
+}
+
 interface BurritoType {
     _id: string;
     name: string;
@@ -56,13 +61,24 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 });
 
+function calculateTotal(
+    burrito: BurritoType, 
+    size: string, 
+    quantity: number, 
+    selectedIngredients: IngredientType[]
+) {
+    const basePrice = burrito.sizePrices.find(sp => sp.size === size)?.price || 0;
+    const xtrasPrice = (selectedIngredients) ? selectedIngredients.reduce((sum, xtras) => sum + xtras.price, 0) : 0;
+    return (basePrice + xtrasPrice) * quantity;
+  }
+
 router.post('/', async (req: Request, res: Response) => {
     try {
         const orderNumber = await Order.countDocuments() + 1;
         let items = req.body.order;
         
         // Get all burritos
-        const burritos = await Burrito.find();
+        const burritos: BurritoType[] = await Burrito.find();
 
         let orderItems = [];
         let total = 0;
@@ -92,11 +108,12 @@ router.post('/', async (req: Request, res: Response) => {
             const item = new OrderItem({
                 burrito: matchingBurrito._id,  // Use the burrito's _id
                 size: currentItem.size,
-                quantity: currentItem.quantity
+                quantity: currentItem.quantity,
+                selectedIngredients: currentItem.selectedIngredients
             });
             orderItems.push(item);
-            total += (price * currentItem.quantity);
-        }   
+            total += calculateTotal(matchingBurrito, currentItem.size, currentItem.quantity, currentItem.selectedIngredients);
+        }
         const order = new Order({orderNumber: orderNumber, total: total, items: orderItems});
         const result = await order.save();
         // const result = 'bypassed';

@@ -14,6 +14,10 @@ export const OrderItemSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      selectedIngredients: [{
+        name: String,
+        price: Number
+      }]
 });
 
 export const OrderItem = mongoose.model('OrderItem', OrderItemSchema);
