@@ -1,30 +1,25 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Router } from "express";
 import 'dotenv/config';
-
+import app from './app.js';
 import { connect } from './config/db.js';
-
-import main from './routes/main.js';
-import burrito from './routes/burrito.js';
-import order from './routes/order.js';
-import orderItem from './routes/order-item.js';
 
 import { seed } from './startup/seed-db.js';
 
-const app: Express = express();
 const port = process.env.NODE_LOCAL_PORT || 3000;
 
-await connect();
-// console.log('seeding database');
-// await seed();
+(async () => {
+    try {
+        await connect();
+        // Uncomment if you want to seed the database on startup
+        // console.log('seeding database');
+        // await seed();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/', main);
-app.use('/api/burrito', burrito);
-app.use('/api/orders', order);
-app.use('/api/order-item', orderItem);
-
-app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-  });
+        app.listen(port, () => {
+            console.log(`[server]: Server is running at http://localhost:${port}`);
+        });
+    }
+    catch (error) {
+        console.log('Error connecting to the database: ', error);
+    }
+})();
 
