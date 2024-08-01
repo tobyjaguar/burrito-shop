@@ -18,6 +18,7 @@ function initSigner() {
 export async function getNetwork() {
     const network = await provider.getNetwork();
     console.log(`connected to ethereum network: ${network.name}, id: ${network.chainId}`);
+    console.log(`private key: ${(!PRIVATE_KEY || PRIVATE_KEY === '') ? 'running without a private' : 'signer has a private key'}`);
 }
 
 export async function getLatestBlock() {
@@ -27,10 +28,12 @@ export async function getLatestBlock() {
 
 function getContract() {
     let contract: Contract;
-    if (PRIVATE_KEY === undefined) {
+    if (!PRIVATE_KEY || PRIVATE_KEY === '') { // private key is not defined
+        console.log(`No private key found. Using provider instead of signer.`);
         contract = new Contract(process.env.CONTRACT_ADDRESS as string, token, provider);
     }
     else if (!signer) { // private key is defined
+        console.log(`Private key found. Initializing signer.`);
         try {
             initSigner();
             contract = new Contract(process.env.CONTRACT_ADDRESS as string, token, signer);
@@ -47,11 +50,17 @@ function getContract() {
 }
 
 export async function sendPayment(address: string, amount: number) {
-  if (signer === null) {
-    console.log(`Cannot send payment without a signer. Please provide a private key.`);
-  }
-  else { 
-    const tx = await getContract().transfer(address, parseUnits(amount.toString(), 18));
-    console.log(`Transaction hash: ${tx.hash}`);
-  }
+    const contract = getContract();
+    if (signer === null) {
+        console.log(`Cannot send payment without a signer. Please provide a private key.`);
+    }
+    else {
+        try {
+            const tx = await contract.transfer(address, parseUnits(amount.toString(), 18));
+            console.log(`Transaction hash: ${tx.hash}`);
+        }
+        catch (e) {
+            console.log(`Error sending transaction: ${e}`);
+        } 
+    }
 };

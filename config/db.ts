@@ -12,12 +12,14 @@ export const connect = async () => {
         await mongoose.connect(url, {} as ConnectOptions);
         console.log('MongoDB connected');
         if (mongoose.connection.readyState) {
-            console.log(`checking if the db has been seeded...`)
-            const burritos = await Burrito.find();
+            console.log(`checking if the db has been seeded...`);
             const count = await Burrito.countDocuments();
             if (count === 0) {
                 console.log('seeding database');
                 await seed();
+            }
+            else {
+                console.log('db has already been seeded with', count, 'burritos');
             }
         }
     } catch (error) {
