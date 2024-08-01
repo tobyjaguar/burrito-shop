@@ -13,6 +13,17 @@ and
 
 These endpoints allow CRUD operations for the store's stock as well as the placement and introspection of orders. The shop stock and orders are stored in MongoDB. The dabase modeling has proper relations ships between Burrito, OrderItem, and Order which are placed in the *models* folder. A burrito has a name, a sizePrices array detailing a size and a price, and an optionalIngredients array detailing a name and price. An order item has a reference to a burrito entity, a size, quantity and selectedIngredients. An order has an orderNumber, an array of order items, and an order total. The post routes are authenticated with an API key which needs to be included in the header, and when an order completes, if an ethereum address is included in the request body, the order's total is sent to the included wallet address denominated in REALM tokens.
 
+## TL;DR
+
+```bash
+docker compose up -d --build
+docker ps
+docker exec -it <name> bash
+yarn test
+exit
+docker compose down
+```
+
 ## Running the application:
 
 This project uses Docker Compose to coordinate the nodejs container with the mongodb container. If using Compose V1 the command to bring up the application will be hyphenated: 
@@ -65,9 +76,17 @@ when running the app locally:
 
 ## Running the test suite
 
+Build the containers and run:
+
 `docker compose up -d --build`
 
-`docker exec -it bash`
+Get the container name for the node application:
+
+`docker ps`
+
+Log in to the container with an interactive terminal:
+
+`docker exec <Container Name> -it bash`
 
 from the bash terminal in the node container:
 
