@@ -8,7 +8,7 @@
   "author": "tobyjaguar <talgya@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "npx tsc && node dist/index.js",
+    "start": "cp -r ./blockchain/contracts dist/blockchain/ && npx tsc && node dist/index.js",
     "build": "npx tsc",
     "dev": "npx tsx index.ts",
     "test": "NODE_OPTIONS='--no-warnings --loader ts-node/esm' mocha --require ts-node/register test/**/*.test.ts"

@@ -3,6 +3,7 @@ import { Burrito } from '../models/burrito.js';
 import { Order } from '../models/order.js';
 import { OrderItem } from '../models/orderItem.js';
 import auth from '../middleware/auth.js';
+import { sendPayment } from "../blockchain/sendPayment.js";
 
 const router = express.Router();
 
@@ -132,7 +133,7 @@ router.post('/', auth, async (req: Request, res: Response) => {
 router.post('/complete/:id', auth, async (req: Request, res: Response) => {
     try {
         const order = await Order.findOne({ orderNumber: req.params.id });
-        const total = order?.total;
+        const total = order?.total || 0;
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
         }
@@ -140,6 +141,10 @@ router.post('/complete/:id', auth, async (req: Request, res: Response) => {
         // if ethereum address is provided, send the total amount to the address
         if (req.body.ethereumAddress) {
             // send total amount to the ethereum address
+            if (total === 0) {
+                return res.status(400).json({ error: 'Total amount is 0' });
+            }
+            await sendPayment(req.body.ethereumAddress, total);
         }
         res.json({ message: 'Order completed' });
     }

@@ -13,8 +13,8 @@ const port = process.env.NODE_LOCAL_PORT || 3000;
         await connect();
         await getNetwork();
         // Uncomment if you want to seed the database on startup
-        // console.log('seeding database');
-        // await seed();
+        console.log('seeding database');
+        await seed();
 
         app.listen(port, () => {
             console.log(`[server]: Server is running at http://localhost:${port}`);
