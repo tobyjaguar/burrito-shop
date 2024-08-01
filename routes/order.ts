@@ -129,4 +129,23 @@ router.post('/', auth, async (req: Request, res: Response) => {
     }
 });
 
+router.post('/complete/:id', auth, async (req: Request, res: Response) => {
+    try {
+        const order = await Order.findOne({ orderNumber: req.params.id });
+        const total = order?.total;
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+        await Order.deleteOne({ orderNumber: req.params.id });
+        // if ethereum address is provided, send the total amount to the address
+        if (req.body.ethereumAddress) {
+            // send total amount to the ethereum address
+        }
+        res.json({ message: 'Order completed' });
+    }
+    catch (error: any) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 export default router;
