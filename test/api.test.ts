@@ -77,7 +77,123 @@ describe('testing the Burrito endpoint', () => {
     expect(res.body.optionalIngredients[2].price).equal(3);
   });
 
-  // Add more burrito tests
+  it('should return all burritos', async () => {
+    for (const burrito of burritoStock) {
+      const newBurrito = new Burrito(burrito);
+      await newBurrito.save();
+    }
+
+    const res = await request(app).get('/api/burrito');
+    expect(res.statusCode).equal(200);
+    expect(res.body.count).equal(7);
+    expect(res.body.burritos).to.have.length(7);
+    expect(res.body.burritos[0]).to.have.any.keys('_id', 'name', 'sizePrices', 'optionalIngredients');
+
+    // Al Pastor
+    expect(res.body.burritos[0].name).equal('Al Pastor');
+    expect(res.body.burritos[0].sizePrices).to.have.length(2);
+    expect(res.body.burritos[0].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[0].sizePrices[0].price).equal(10);
+    expect(res.body.burritos[0].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[0].sizePrices[1].price).equal(12);
+    expect(res.body.burritos[0].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[0].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[0].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[0].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[0].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[0].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[0].optionalIngredients[2].price).equal(3);
+
+    // Carne Asada
+    expect(res.body.burritos[1].name).equal('Carne Asada');
+    expect(res.body.burritos[1].sizePrices).to.have.length(2);
+    expect(res.body.burritos[1].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[1].sizePrices[0].price).equal(12);
+    expect(res.body.burritos[1].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[1].sizePrices[1].price).equal(15);
+    expect(res.body.burritos[1].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[1].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[1].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[1].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[1].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[1].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[1].optionalIngredients[2].price).equal(3);
+
+    // Carnitas
+    expect(res.body.burritos[2].name).equal('Carnitas');
+    expect(res.body.burritos[2].sizePrices).to.have.length(2);
+    expect(res.body.burritos[2].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[2].sizePrices[0].price).equal(12);
+    expect(res.body.burritos[2].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[2].sizePrices[1].price).equal(15);
+    expect(res.body.burritos[2].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[2].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[2].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[2].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[2].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[2].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[2].optionalIngredients[2].price).equal(3);
+
+    // Chorizo
+    expect(res.body.burritos[3].name).equal('Chorizo');
+    expect(res.body.burritos[3].sizePrices).to.have.length(2);
+    expect(res.body.burritos[3].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[3].sizePrices[0].price).equal(15);
+    expect(res.body.burritos[3].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[3].sizePrices[1].price).equal(20);
+    expect(res.body.burritos[3].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[3].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[3].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[3].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[3].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[3].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[3].optionalIngredients[2].price).equal(3);
+
+    // Chicken
+    expect(res.body.burritos[4].name).equal('Chicken');
+    expect(res.body.burritos[4].sizePrices).to.have.length(2);
+    expect(res.body.burritos[4].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[4].sizePrices[0].price).equal(12);
+    expect(res.body.burritos[4].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[4].sizePrices[1].price).equal(15);
+    expect(res.body.burritos[4].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[4].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[4].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[4].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[4].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[4].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[4].optionalIngredients[2].price).equal(3);
+
+    // Fish
+    expect(res.body.burritos[5].name).equal('Fish');
+    expect(res.body.burritos[5].sizePrices).to.have.length(2);
+    expect(res.body.burritos[5].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[5].sizePrices[0].price).equal(14);
+    expect(res.body.burritos[5].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[5].sizePrices[1].price).equal(18);
+    expect(res.body.burritos[5].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[5].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[5].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[5].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[5].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[5].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[5].optionalIngredients[2].price).equal(3);
+
+    // Vegetarian
+    expect(res.body.burritos[6].name).equal('Vegetarian');
+    expect(res.body.burritos[6].sizePrices).to.have.length(2);
+    expect(res.body.burritos[6].sizePrices[0].size).equal('Regular');
+    expect(res.body.burritos[6].sizePrices[0].price).equal(8);
+    expect(res.body.burritos[6].sizePrices[1].size).equal('XL');
+    expect(res.body.burritos[6].sizePrices[1].price).equal(10);
+    expect(res.body.burritos[6].optionalIngredients).to.have.length(3);
+    expect(res.body.burritos[6].optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.burritos[6].optionalIngredients[0].price).equal(2);
+    expect(res.body.burritos[6].optionalIngredients[1].name).equal('Rice');
+    expect(res.body.burritos[6].optionalIngredients[1].price).equal(1);
+    expect(res.body.burritos[6].optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.burritos[6].optionalIngredients[2].price).equal(3);
+  });
 });
 
 describe('testing Order endpoint', () => {
@@ -115,5 +231,8 @@ describe('testing Order endpoint', () => {
     expect(res.body.result.total).equal(87);
   });
 
-  // Add more order-related tests
+  it('should list an order', async () => {
+    const res = await request(app).get('/api/orders');
+    console.log(res.body);
+  });
 });
