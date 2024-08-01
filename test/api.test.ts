@@ -5,6 +5,7 @@ import app from '../app.js';
 
 import { Burrito } from '../models/burrito.js';  
 import { Order } from '../models/order.js';  
+import { burritoStock } from '../startup/seed-db.js';
 import 'dotenv/config';
 
 // const url = process.env.MONGO_DB_URI as string;
@@ -29,11 +30,19 @@ beforeEach(async () => {
   await Order.deleteMany({});
 });
 
-describe('Testing the APIs', () => {
+describe('testing the APIs', () => {
   it ('should return a welcome message', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).equal(200);
     expect(res.text).include('Welcome to the Burrito API!');
+  });
+});
+
+describe('testing the Burrito endpoint', () => {
+  it ('should return a welcome message', async () => {
+    const res = await request(app).get('/');
+    expect(res.statusCode).equal(200);
+    expect(res.text).to.include('Welcome to the Burrito API!');
   });
 
   it('should create a new burrito', async () => {
@@ -46,7 +55,7 @@ describe('Testing the APIs', () => {
             { size: "XL", price: 12 }
         ],
         optionalIngredients: [
-            { name: "Sour Cream", price: 2 },
+            { name: "Black Olives", price: 2 },
             { name: "Rice", "price": 1 },
             { name: "Sour Cream", price: 3 }
         ]
@@ -60,35 +69,51 @@ describe('Testing the APIs', () => {
     expect(res.body.sizePrices[0].price).equal(10);
     expect(res.body.sizePrices[1].price).equal(12);
     expect(res.body.optionalIngredients).to.have.length(3);
-    expect(res.body.optionalIngredients[0].name).equal('Sour Cream');
+    expect(res.body.optionalIngredients[0].name).equal('Black Olives');
+    expect(res.body.optionalIngredients[0].price).equal(2);
+    expect(res.body.optionalIngredients[1].name).equal('Rice');
+    expect(res.body.optionalIngredients[1].price).equal(1);
+    expect(res.body.optionalIngredients[2].name).equal('Sour Cream');
+    expect(res.body.optionalIngredients[2].price).equal(3);
   });
 
-  // Add more burrito-related tests
+  // Add more burrito tests
 });
 
-// describe('Order API', () => {
-//   it('should create a new order', async () => {
-//     // Create a burrito
-//     const burrito = await Burrito.create({
-//       name: "Test Burrito",
-//       sizePrices: [{ size: "Regular", price: 10 }],
-//       optionalIngredients: [{ name: "Sour Cream", price: 1.50 }]
-//     });
+describe('testing Order endpoint', () => {
+  it('should create a new order', async () => {
+    // Add burrito stock to the database
+    for (const burrito of burritoStock) {
+      const newBurrito = new Burrito(burrito);
+      await newBurrito.save();
+    }
 
-//     const res = await request(app)
-//     .post('/api/orders')
-//     .send({
-//         items: [{
-//           burrito: burrito._id,
-//           size: "Regular",
-//           quantity: 1,
-//           selectedIngredients: [{ name: "Sour Cream", price: 1.50 }]
-//         }],
-//         total: 11.50  // 10 for burrito + 1.50 for sour cream
-//       });
-//     expect(res.statusCode).toEqual(201);
-//     expect(res.body.total).toEqual(11.50);
-//   });
+    let order = {
+      order: [
+          { burrito: "Al Pastor", size: "XL", quantity: 2 },
+          { burrito: "Carne Asada", size: "XL", quantity: 1 },
+          { burrito: "Chicken", size: "Regular", quantity: 1, selectedIngredients: [{ name: "Black Olives", price: 2 }]},
+          { burrito: "Fish", size: "Regular", quantity: 2, selectedIngredients: [{ name: "Sour Cream", price: 3 }] }
+      ]
+    };
 
-//   // Add more order-related tests
-// });
+    const res = await request(app)
+    .post('/api/orders')
+    .send(order);
+
+    expect(res.statusCode).equal(200);
+    expect(res.body.message).to.include('Order created');
+    expect(res.body.result.orderNumber).equal(1);
+    expect(res.body.result.items).to.have.length(4);
+    expect(res.body.result.items[0]).to.have.any.keys('burrito', '_id', 'size', 'quantity', 'selectedIngredients');
+    expect(res.body.result.items[0]).to.include({ size: "XL", quantity: 2 });
+    expect(res.body.result.items[1]).to.include({ size: "XL", quantity: 1 });
+    expect(res.body.result.items[2]).to.include({ size: "Regular", quantity: 1 });
+    expect(res.body.result.items[2].selectedIngredients[0]).to.include({ name: "Black Olives", price: 2 });
+    expect(res.body.result.items[3]).to.include({ size: "Regular", quantity: 2 });
+    expect(res.body.result.items[3].selectedIngredients[0]).to.include({ name: "Sour Cream", price: 3 });
+    expect(res.body.result.total).equal(87);
+  });
+
+  // Add more order-related tests
+});
