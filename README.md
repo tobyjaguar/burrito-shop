@@ -1,6 +1,8 @@
 # Burrito Shop
 APIs for my burrito shop's point of sales system
 
+<img src="./assets/image.png" alt="burrito-shop" width="600"/>
+
 This project creates a backend set of APIs for the Burrito Shop. The project consists of two docker containers managed with Docker Compose, a NodeJS Express application and a MongoDB instance. The APIs are built in Typescript with Express targeting NodeJS v18. The APIs support orders for the Burrito Shop consisting of two primary endpoints:
 
 `/api/burrito`
@@ -9,7 +11,7 @@ and
 
 `/api/orders`
 
-These endpoints allow CRUD operations for the store's stock as well as the placement and introspection of orders. The shop stock and orders are stored in MongoDB. The dabase modeling has proper relations ships between Burrito, OrderItem, and Order which are placed in the *models* folder. A burrito has a name, a sizePrices array detailing a size and a price, and an optionalIngredients array detailing a name and price. An order item has a reference to a burrito entity, a size, quantity and selectedIngredients. An order has an orderNumber, an array of order items, and an order total.
+These endpoints allow CRUD operations for the store's stock as well as the placement and introspection of orders. The shop stock and orders are stored in MongoDB. The dabase modeling has proper relations ships between Burrito, OrderItem, and Order which are placed in the *models* folder. A burrito has a name, a sizePrices array detailing a size and a price, and an optionalIngredients array detailing a name and price. An order item has a reference to a burrito entity, a size, quantity and selectedIngredients. An order has an orderNumber, an array of order items, and an order total. The post routes are authenticated with an API key which needs to be included in the header, and when an order completes, if an ethereum address is included in the request body, the order's total is sent to the included wallet address denominated in REALM tokens.
 
 ## Running the application:
 
@@ -113,6 +115,25 @@ Once the order is created, calling the completed endpoint with the order number 
 
 It is recommended to engage the APIs upon start up, and then log into the node container to run the test suite. Or bring down the containers and bring them back up.
 
+## Running locally
+
+If running locally the connection to the database must be changed from the container to the instance running locally. Within the config folder, the db.ts file needs to be updated to:
+
+```Typescript
+// const url = process.env.MONGO_DB_URI as string;
+const url = 'mongodb://localhost:27017/test';
+```
+
+To start the application navigate to the root of the project directory and run:
+
+`yarn start`
+
+This will copy the requisite files, compile the typescript, and start the application.
+
+Again, the API endpoint will need the port 3000 designation:
+
+`http://localhost:3000/api/`
+
 ## API Layout
 
 The following APIs are available:
@@ -206,7 +227,9 @@ There was great effort into using Jest to test the API application, however the 
 
 ## Environment File
 
-A note about the .env file.
+A note about the .env file. The complete .env is not included in the repo because this is an application security concern. An example .env file is included in the repo which will be copied when the container starts. However, the example values are **NOT** complete, and will need all values for the application to make successful blockchain transactions, as the private key is missing from the example file.
+
+## Additional Notes
 
 This medium post was helpful in overcoming the Silicon Mongo issue and is included for attribution:
 [article](https://medium.com/@b.watcharachai/install-mongodb-on-mac-arm-apple-chip-m1-m2-7045bc44f483)
