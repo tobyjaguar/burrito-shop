@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { Burrito } from '../models/burrito.js';
 import { Order } from '../models/order.js';
 import { OrderItem } from '../models/orderItem.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -77,7 +78,7 @@ function calculateTotal(
     return (basePrice + xtrasPrice) * quantity;
   }
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', auth, async (req: Request, res: Response) => {
     try {
         const orderNumber = await Order.countDocuments() + 1;
         let items = req.body.order;

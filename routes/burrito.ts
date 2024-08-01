@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { Burrito } from '../models/burrito.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.get('/', async (req: Request, res: Response) => {
     }
 });
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', auth, async (req: Request, res: Response) => {
     try {
         const newBurrito = new Burrito(req.body);
         const result = await newBurrito.save();
