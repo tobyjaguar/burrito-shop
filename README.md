@@ -96,6 +96,10 @@ from the bash terminal in the node container:
 
 `docker compose down`
 
+the following output is printed to the console:
+
+<img src="./assets/tests.png" alt="tests" width="300"/>
+
 ## Engaging the APIs from the containers
 
 ` docker compose up -d --build`
