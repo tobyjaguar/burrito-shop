@@ -1,7 +1,7 @@
 # Burrito Shop
 APIs for my burrito shop's point of sales system
 
-<img src="./assets/image.png" alt="burrito-shop" width="600"/>
+<img src="./assets/image2.png" alt="burrito-shop" width="600"/>
 
 This project creates a backend set of APIs for the Burrito Shop. The project consists of two docker containers managed with Docker Compose, a NodeJS Express application and a MongoDB instance. The APIs are built in Typescript with Express targeting NodeJS v18. The APIs support orders for the Burrito Shop consisting of two primary endpoints:
 
@@ -17,7 +17,7 @@ These endpoints allow CRUD operations for the store's stock as well as the place
 
 This project uses Docker Compose to coordinate the nodejs container with the mongodb container. If using Compose V1 the command to bring up the application will be hyphenated: 
 
-`docker -compose`
+`docker-compose`
 
 if using Compose V2 the command will be separated:
 
@@ -30,6 +30,8 @@ Run docker compose up to start the application:
 To stop the application run docker-compose down
 
 `docker-compose down`
+
+*NOTE* The .env values need to be filled out for the ethereum transactions to work. Paste in a fully formed .env file or add the appropriate values to the .env.example file which will be copied during runtime.
 
 There are a few ways to engage the APIs:
 
@@ -223,7 +225,7 @@ The transaction hash will be printed to the console, which is not visible from t
 
 ## Testing Suite
 
-There was great effort into using Jest to test the API application, however the interaction with Jest and Typescript made this too time consuming to persure for this project. The Mocha/Chai testing framework was chosen for the unit test suite in combination with supertest. Determining the exact Typescript and Jest setting is left as a future endeavour. The test suite covers the API functionality *except* for the completion endpoint. 
+There was great effort into using Jest to test the API application, however the interaction with Jest and Typescript made this too time consuming to pursue for this project. The Mocha/Chai testing framework was chosen for the unit test suite in combination with supertest. Determining the exact Typescript and Jest setting is left as a future endeavour. The test suite covers the API functionality *except* for the completion endpoint. 
 
 ## Environment File
 
