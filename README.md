@@ -11,7 +11,7 @@ and
 
 `/api/orders`
 
-These endpoints allow CRUD operations for the store's stock as well as the placement and introspection of orders. The shop stock and orders are stored in MongoDB. The dabase modeling has proper relations ships between Burrito, OrderItem, and Order which are placed in the *models* folder. A burrito has a name, a sizePrices array detailing a size and a price, and an optionalIngredients array detailing a name and price. An order item has a reference to a burrito entity, a size, quantity and selectedIngredients. An order has an orderNumber, an array of order items, and an order total. The post routes are authenticated with an API key which needs to be included in the header, and when an order completes, if an ethereum address is included in the request body, the order's total is sent to the included wallet address denominated in REALM tokens.
+These endpoints allow CRUD operations for the store's stock as well as the placement and introspection of orders. The shop stock and orders are stored in MongoDB. The database modeling has proper relationships between Burrito, OrderItem, and Order which are placed in the *models* folder. A burrito has a name, a sizePrices array detailing a size and a price, and an optionalIngredients array detailing a name and price. An order item has a reference to a burrito entity, a size, quantity and selectedIngredients. An order has an orderNumber, an array of order items, and an order total. The post routes are authenticated with an API key which needs to be included in the header, and when an order completes, if an ethereum address is included in the request body, the order's total is sent to the included wallet address denominated in REALM tokens.
 
 ## TL;DR
 
