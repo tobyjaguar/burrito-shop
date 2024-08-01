@@ -21,7 +21,6 @@ router.post('/', async (req: Request, res: Response) => {
     try {
         const newBurrito = new Burrito(req.body);
         const result = await newBurrito.save();
-        console.log(result);
         res.status(201).json(result);
     } catch (error: any) {
         res.status(500).json({ message: error.message });
