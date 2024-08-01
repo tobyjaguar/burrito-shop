@@ -15,6 +15,8 @@ These endpoints allow CRUD operations for the store's stock as well as the place
 
 ## TL;DR
 
+fill out all values in the .env.example file, then: 
+
 ```bash
 docker compose up -d --build
 docker ps
@@ -42,7 +44,11 @@ To stop the application run docker-compose down
 
 `docker-compose down`
 
-*NOTE* The .env values need to be filled out for the ethereum transactions to work. Paste in a fully formed .env file or add the appropriate values to the .env.example file which will be copied during runtime.
+#### NOTE ABOUT ENV VALUES
+
+*The .env values need to be filled out for the ethereum transactions to work. Copy in a fully formed .env file **as** the .env.example file or add the appropriate values to the .env.example file. The .env.example file will be copied as the .env file during build and runtime execution.*
+
+## Accessing the API endpoints
 
 There are a few ways to engage the APIs:
 
