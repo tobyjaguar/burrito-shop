@@ -23,6 +23,7 @@ interface OrderType {
     burrito: BurritoType;
     size: string;
     quantity: number;
+    selectedIngredients: IngredientType[];
 }
 
 router.get('/', async (req: Request, res: Response) => {
@@ -45,14 +46,18 @@ router.get('/:id', async (req: Request, res: Response) => {
             path: 'items.burrito',
             select: 'name sizePrices' // Only return the name and sizePrices fields
         });
-        const formattedOrder = {
+        const formattedOrder: any = {
             _id: order?._id,
             total: order?.total,
             items: order?.items.map((item: OrderType) => ({
               burritoName: item.burrito.name,
               size: item.size,
               quantity: item.quantity,
-              price: item.burrito.sizePrices.find((sp: any) => sp.size === item.size)?.price
+              price: item.burrito.sizePrices.find((sp: any) => sp.size === item.size)?.price,
+              selectedIngredients: item.selectedIngredients.map((ingredient: IngredientType) => ({
+                name: ingredient.name,
+                price: ingredient.price
+              }))
             }))
         };
         res.json(formattedOrder);

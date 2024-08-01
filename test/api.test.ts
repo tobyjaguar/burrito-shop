@@ -7,6 +7,7 @@ import { Burrito } from '../models/burrito.js';
 import { Order } from '../models/order.js';  
 import { burritoStock } from '../startup/seed-db.js';
 import 'dotenv/config';
+import e from 'express';
 
 // const url = process.env.MONGO_DB_URI as string;
 const url = 'mongodb://localhost:27017/test';
@@ -232,7 +233,84 @@ describe('testing Order endpoint', () => {
   });
 
   it('should list an order', async () => {
-    const res = await request(app).get('/api/orders');
-    console.log(res.body);
+    for (const burrito of burritoStock) {
+      const newBurrito = new Burrito(burrito);
+      await newBurrito.save();
+    }
+
+    let order1 = {
+      order: [
+          { burrito: "Al Pastor", size: "XL", quantity: 2 },
+          { burrito: "Carne Asada", size: "XL", quantity: 1 },
+          { burrito: "Chicken", size: "Regular", quantity: 1, selectedIngredients: [{ name: "Black Olives", price: 2 }]},
+          { burrito: "Fish", size: "Regular", quantity: 2, selectedIngredients: [{ name: "Sour Cream", price: 3 }] }
+      ]
+    };
+
+    let order2 = {
+      order: [
+          { burrito: "Vegetarian", size: "XL", quantity: 2, selectedIngredients: [{ name: "Sour Cream", price: 3 }] },
+          { burrito: "Chorizo", size: "XL", quantity: 1, selectedIngredients: [{ name: "Rice", price: 1 }] },
+          { burrito: "Chicken", size: "Regular", quantity: 1, selectedIngredients: [{ name: "Black Olives", price: 2 }]},
+          { burrito: "Fish", size: "Regular", quantity: 2, selectedIngredients: [{ name: "Black Olives", price: 2 }, { name: "Sour Cream", price: 3 }] }
+      ]
+    };
+
+    // place an order
+    await request(app)
+    .post('/api/orders')
+    .send(order1);
+
+    const orderRes = await request(app)
+    .post('/api/orders')
+    .send(order2);
+    expect(orderRes.statusCode).equal(200);
+    expect(orderRes.body.result.orderNumber).equal(2);
+    let orderNumber = orderRes.body.result.orderNumber;
+
+    // list order 2
+    const res = await request(app).get(`/api/orders/${orderNumber}`);
+    expect(res.statusCode).equal(200);
+    expect(res.body).to.have.property('_id'); // to be defined
+    expect(res.body.total).equal(99);
+    expect(res.body.items).to.have.length(4);
+    expect(res.body.items[0]).to.include({ burritoName: "Vegetarian", size: "XL", quantity: 2 });
+    expect(res.body.items[0].selectedIngredients[0]).to.include({ name: "Sour Cream", price: 3 });
+    expect(res.body.items[1]).to.include({ burritoName: "Chorizo", size: "XL", quantity: 1 });
+    expect(res.body.items[1].selectedIngredients[0]).to.include({ name: "Rice", price: 1 });
+    expect(res.body.items[2]).to.include({ burritoName: "Chicken", size: "Regular", quantity: 1 });
+    expect(res.body.items[2].selectedIngredients[0]).to.include({ name: "Black Olives", price: 2 });
+    expect(res.body.items[3]).to.include({ burritoName: "Fish", size: "Regular", quantity: 2 });
+    expect(res.body.items[3].selectedIngredients[0]).to.include({ name: "Black Olives", price: 2 });
+    expect(res.body.items[3].selectedIngredients[1]).to.include({ name: "Sour Cream", price: 3 });
+  });
+
+  it('should fail to place an order', async () => {
+    for (const burrito of burritoStock) {
+      const newBurrito = new Burrito(burrito);
+      await newBurrito.save();
+    }
+
+    let order = {
+      order: [
+          { burrito: "Chocolate", size: "XL", quantity: 1 }
+      ]
+    };
+
+    let res = await request(app)
+    .post('/api/orders')
+    .send(order);
+    expect(res.statusCode).equal(404);
+    expect(res.body).to.have.property('error');
+    expect(res.text).include('Burrito not found');
+  });
+
+  it('should fail to list a non-existant order', async () => {
+    
+
+    let res = await request(app).get('/api/orders/1');
+    expect(res.statusCode).equal(404);
+    expect(res.body).to.have.property('error');
+    expect(res.body.error).equal('Order not found');
   });
 });
