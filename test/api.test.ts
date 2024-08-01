@@ -8,8 +8,8 @@ import { Order } from '../models/order.js';
 import { burritoStock } from '../startup/seed-db.js';
 import 'dotenv/config';
 
-// const url = process.env.MONGO_DB_URI as string;
-const url = 'mongodb://localhost:27017/test';
+const url = process.env.MONGO_DB_URI as string;
+// const url = 'mongodb://localhost:27017/test';
 const API_KEY = process.env.API_KEY as string; // Stored in the environment variable
 
 // beforeAll(async () => {
